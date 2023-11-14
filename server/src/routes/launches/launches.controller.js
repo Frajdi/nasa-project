@@ -36,8 +36,8 @@ const httpPostNewLaunch = (req, res) => {
   return res.status(201).json(launch);
 };
 
-const httpDeleteLaunch = (req, res) => {
-  const launchId = Number(req.params.id);
+const httpDeleteLaunch = async(req, res) => {
+  const launchId = req.params.id;
 
   if (!launchExists(launchId)) {
     return res.status(404).json({
@@ -45,7 +45,7 @@ const httpDeleteLaunch = (req, res) => {
     });
   }
 
-  const aborted = deleteLaunch(launchId);
+  const aborted = await deleteLaunch(launchId);
 
   return res.status(200).json(aborted);
 };
