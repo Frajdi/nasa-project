@@ -10,7 +10,7 @@ const httpGetAllLaunches = async(req, res) => {
   return res.status(200).json(launches);
 };
 
-const httpPostNewLaunch = (req, res) => {
+const httpPostNewLaunch = async(req, res) => {
   const launch = req.body;
 
   if (
@@ -32,14 +32,22 @@ const httpPostNewLaunch = (req, res) => {
     });
   }
 
-  addNewLaunch(launch);
-  return res.status(201).json(launch);
+
+  try{
+    await addNewLaunch(launch)
+    return res.status(201).json(launch);
+  }catch(error){
+    return res.status(400).json({
+      error: error.message
+    });
+  }
+
 };
 
 const httpDeleteLaunch = async(req, res) => {
   const launchId = req.params.id;
 
-  if (!launchExists(launchId)) {
+  if (!await launchExists(launchId)) {
     return res.status(404).json({
       error: "Launch not found",
     });
@@ -47,7 +55,13 @@ const httpDeleteLaunch = async(req, res) => {
 
   const aborted = await deleteLaunch(launchId);
 
-  return res.status(200).json(aborted);
+  if(!aborted){
+    return res.status(400).json({
+      error: 'Launch not aborted!'
+    })
+  }
+
+  return res.status(200).json({ok: true});
 };
 
 module.exports = {
