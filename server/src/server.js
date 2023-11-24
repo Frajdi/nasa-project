@@ -2,6 +2,7 @@ const http = require('http');
 const app = require('./app');
 const {mongoConnect} = require('./services/mongo')
 const {loadPlanetsData} = require('./models/planets.model');
+const {loadLaunches} = require('./models/launches.model');
 
 const PORT = process.env.PORT || 4000;
 
@@ -9,7 +10,9 @@ const server = http.createServer(app);
 
 const startServer = (async() => {
  
-    await mongoConnect()
+    await mongoConnect();
+
+    await loadLaunches();
 
     await loadPlanetsData();
     
